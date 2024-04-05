@@ -1,8 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\.venv"
+    ""
   ],
-  "SelectedNode": "\\app.py",
+  "SelectedNode": "\\__pycache__",
   "PreviewInSolutionExplorer": false
 }
