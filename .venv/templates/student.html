@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Enrollment Web App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student.css') }}"/>
+    <!-- To apply css of other pages-->
+    <!-- {% block styleLogin %}{% endblock %} -->
+  </head>
+  <body>
+    <div class="main-container" id="main-container">
+      <h1 class="app-name" id="app-name">ACME University</h1>    
+      <div class="content-container" id="content-container">
+        <div class="tab-container" id="tab-container">
+          <button class="your-courses" id="your-courses" onclick="renderYourCourses()">Your Courses</button>
+          <button class="add-courses" id="add-courses" onclick="renderAddCourses()">Add Courses</button>
+        </div>
+        <div class="course-table" id="course-table">
+          <table>
+            {% if yourCoursesTH %}
+            <tr>
+              <th>Course Name</th>
+              <th>Teacher</th>
+              <th>Time</th>
+              <th>Students Enrolled</th>
+            </tr>
+            {% for course in courses %}
+            <tr>
+              <td>{{ course.name }}</td>
+              <td>{{ course.teacher }}</td>
+              <td>{{ course.time }}</td>
+              <td>{{ course.students_enrolled }}/{{ course.capacity }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <th>Course Name</th>
+              <th>Teacher</th>
+              <th>Time</th>
+              <th>Students Enrolled</th>
+              <th>Add class</th>
+            </tr>
+            {% endif %}
+            {% for course in courseCatalog %}
+            <tr>
+              <td>{{ course.name }}</td>
+              <td>{{ course.teacher }}</td>
+              <td>{{ course.time }}</td>
+              <td>{{ course.students_enrolled }}/{{ course.capacity }}</td>
+              <td>
+                {% if course in enrolled_courses %}
+                <button class="unenroll" id="unenroll" onclick="unenroll('{{ course.name }}')">-</button>
+                {% else %}
+                <button class="enroll" id="enroll" onclick="enroll('{{ course.name }}')">+</button>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/student.js') }}"></script>
+  </body>
+</html>
