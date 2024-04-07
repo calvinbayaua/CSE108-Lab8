@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.venv",
+    "\\.venv\\static",
+    "\\.venv\\static\\css",
+    "\\.venv\\static\\js"
+  ],
+  "SelectedNode": "\\.venv\\pyvenv.cfg",
+  "PreviewInSolutionExplorer": false
+}
