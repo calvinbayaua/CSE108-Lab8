@@ -12,13 +12,29 @@ db = SQLAlchemy(app)
 admin = Admin(app)
 
 #This table will be student view of classes
-class Student_table(db.Model):
+class StudentClasses(db.Model):
+    courseName = db.Column(db.String, primary_key=True)
+    teacher = db.Column(db.String, unique=True, nullable=False)
+    time = db.Column(db.String, unique=True, nullable=False)
+    enrollment = db.Column(db.String, unique=True, nullable=False)
+    
+#This table will allow students to add classes
+class AvailableClasses(db.Model):
     courseName = db.Column(db.String, primary_key=True)
     teacher = db.Column(db.String, unique=True, nullable=False)
     time = db.Column(db.String, unique=True, nullable=False)
     
-    #This could be pulled from a different table
-    #enrollment = db.Column(db.String, unique=True, nullable=False)
+#This table will allow teachers to see their classes
+class TeacherClasses(db.Model):
+    courseName = db.Column(db.String, primary_key=True)
+    teacher = db.Column(db.String, unique=True, nullable=False)
+    time = db.Column(db.String, unique=True, nullable=False)
+    
+#This table will allow teachers to see the student and grade of a class
+class TeacherView(db.Model):
+    courseName = db.Column(db.String, primary_key=True)
+    teacher = db.Column(db.String, unique=True, nullable=False)
+    time = db.Column(db.String, unique=True, nullable=False)
     
 @app.route('/')
 def start():
