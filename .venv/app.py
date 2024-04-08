@@ -23,7 +23,15 @@ class Student_table(db.Model):
 @app.route('/')
 def start():
     db.create_all()
-    return render_template("login.html") 
+    return render_template("login.html")
+
+@app.route('/student')
+def Student():
+    return render_template("student.html")
+
+@app.route('/admin')
+def Admin():
+    return render_template("admin.html")
 
 if __name__ == "__main__":
     app.run()
