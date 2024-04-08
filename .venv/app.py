@@ -81,6 +81,14 @@ def start():
 def Student():
     return render_template("student.html")
 
+@app.route('/teacher')
+def Teacher():
+    return render_template("teacher.html")
+
+@app.route('/login')
+def Teacher():
+    return render_template("login.html")
+
 # @app.route('/admin') # Flask Admin Build the route for us so we do not need to specify a route
 
 
