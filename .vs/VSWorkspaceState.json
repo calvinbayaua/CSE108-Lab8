@@ -2,10 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\.venv",
-    "\\.venv\\Lib",
     "\\.venv\\static",
     "\\.venv\\static\\css",
-    "\\.venv\\static\\js"
+    "\\.venv\\static\\js",
+    "\\.venv\\templates"
   ],
   "SelectedNode": "\\.venv\\app.py",
   "PreviewInSolutionExplorer": false
