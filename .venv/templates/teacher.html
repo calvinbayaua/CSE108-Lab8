@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}"/>
+   
+  </head>
+  <body>
+    <div class="main-container" id="main-container">
+	  <div class="header">
+	  <h1 class="welcome" id="welcome">Welcome!</h1>
+      <h1 class="app-name" id="app-name">ACME University</h1>
+     
+      <a href="login.html" class="sign-out-link" id="sign-out-link">Sign Out</a> <!-- Gaige needs to figure out the login route here-->
+    </div>
+     
+      <div class="content-container" id="content-container">
+        <div class="tab-container" id="tab-container">
+          <button class="your-courses" id="your-courses" onclick="renderYourCourses()">Your Courses</button>
+        </div>
+        <div class="course-table" id="course-table">
+          <table>
+            
+            <tr>
+              <th>Course Name</th>
+              <th>Teacher</th>
+              <th>Time</th>
+              <th>Students Enrolled</th>
+            </tr>
+           
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr
+           
+           </table>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/teacher.js') }}"></script>
+  </body>
+</html>
