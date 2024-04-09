@@ -44,8 +44,8 @@ function renderAddCourses() {
 function enroll(courseName) {
     var xhttp = new XMLHttpRequest();
     var user_id = getUserId();
-    var url = '/student/' + user_id + '/enroll';
-    xhttp.open("POST", url, true);
+    var url = '/student/' + user_id + '/add-courses/enroll';
+    xhttp.open("PUT", url, true);
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhttp.send(JSON.stringify({ courseName: courseName }));
 }
@@ -53,8 +53,8 @@ function enroll(courseName) {
 function unenroll(courseName) {
     var xhttp = new XMLHttpRequest();
     var user_id = getUserId();
-    var url = '/student/' + user_id + '/unenroll';
-    xhttp.open("POST", url, true);
+    var url = '/student/' + user_id + '/add-courses/unenroll';
+    xhttp.open("DELETE", url, true);
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhttp.send(JSON.stringify({ courseName: courseName }));
 }
