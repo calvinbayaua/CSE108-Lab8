@@ -11,35 +11,28 @@ app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 db = SQLAlchemy(app)
 admin = Admin(app)
 
-#This table will be student view of classes
-class StudentClasses(db.Model):
-    courseName = db.Column(db.String, primary_key=True)
-    teacher = db.Column(db.String, unique=True, nullable=False)
-    time = db.Column(db.String, unique=True, nullable=False)
-    enrollment = db.Column(db.String, unique=True, nullable=False)
-    
-#This table will allow students to add classes
-class AvailableClasses(db.Model):
-    courseName = db.Column(db.String, primary_key=True)
-    teacher = db.Column(db.String, unique=True, nullable=False)
-    time = db.Column(db.String, unique=True, nullable=False)
-    
-#This table will allow teachers to see their classes
-class TeacherClasses(db.Model):
-    courseName = db.Column(db.String, primary_key=True)
-    teacher = db.Column(db.String, unique=True, nullable=False)
-    time = db.Column(db.String, unique=True, nullable=False)
-    
-#This table will allow teachers to see the student and grade of a class
-class TeacherView(db.Model):
-    courseName = db.Column(db.String, primary_key=True)
-    teacher = db.Column(db.String, unique=True, nullable=False)
-    time = db.Column(db.String, unique=True, nullable=False)
+# Intermediate table for many-to-many relationship between students and classes
+student_class_association = db.Table('student_class_association',
+    db.Column('student_id', db.Integer, db.ForeignKey('student.id'), primary_key=True),
+    db.Column('class_id', db.Integer, db.ForeignKey('class.id'), primary_key=True)
+)
+
+class Student(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+
+class Class(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    time = db.Column(db.String(50))
+    teacher = db.Column(db.String(100))
+    students = db.relationship('Student', secondary=student_class_association, backref=db.backref('classes', lazy='dynamic'))
+
     
 @app.route('/')
 def start():
     db.create_all()
-    return render_template("login.html") 
+    return render_template("student.html") 
 
 if __name__ == "__main__":
     app.run()
