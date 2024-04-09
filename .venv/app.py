@@ -45,6 +45,7 @@ def print_database_schema():
 #This table will be student view of classes
 class StudentClasses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    class_id = db.Column(db.Integer, nullable=False)
     courseName = db.Column(db.String, nullable=False)
     teacher = db.Column(db.String, nullable=False)
     time = db.Column(db.String, nullable=False)
@@ -53,6 +54,7 @@ class StudentClasses(db.Model):
 #This table will allow students to add classes
 class AvailableClasses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    class_id = db.Column(db.Integer, nullable=False)
     courseName = db.Column(db.String, unique=True, nullable=False)
     teacher = db.Column(db.String, unique=True, nullable=False)
     time = db.Column(db.String, unique=True, nullable=False)
@@ -94,6 +96,7 @@ def load_user(user_id):
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    # db.drop_all()
     print("Route '/' Called")
     db.create_all()
     if request.method == 'POST':
@@ -127,6 +130,20 @@ def Teacher():
     return render_template("teacher.html")
 
 # @app.route('/admin') # Flask Admin Build the route for us so we do not need to specify a route
+
+@app.route('/student/your-courses')
+def get_student_courses():
+
+    # Query student courses based on user ID
+    student_courses = StudentClasses.query.all()
+    courses_data = [{"courseName": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in student_courses]
+    return jsonify(courses_data)
+
+@app.route('/student/add-courses')
+def get_available_courses():
+    available_courses = AvailableClasses.query.all()
+    courses_data = [{"courseName": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in available_courses]
+    return jsonify(courses_data)
 
 @app.route('/get-teacher-courses')
 def get_teacher_courses():
