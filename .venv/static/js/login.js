@@ -9,6 +9,8 @@ function login() {
     xhttp.onload = function() {
         if (xhttp.status === 200) {
             console.log('Login successful');
+            var response = JSON.parse(xhttp.responseText);
+            window.location.href = response.redirect_url;
         } else if (xhttp.status === 401 || xhttp.status === 404) {
             console.error('Retry login');
             document.getElementById('username').value = "";
