@@ -80,7 +80,7 @@ body {
   }
   
   .course-table {
-    display: flex;
+    /* display: flex; */ /* Remove this line */
     justify-content: center;
     margin: 30px;
     width: calc(100% - 60px);
@@ -91,6 +91,19 @@ body {
     text-align: left;
     font-size: 20px;
   }
+
+  /* .course-table {
+    display: flex;
+    justify-content: center;
+    margin: 30px;
+    width: calc(100% - 60px);
+    max-height: 85%;
+    overflow-y: auto;
+    background-color: #dae3f3;
+    color: white;
+    text-align: left;
+    font-size: 20px;
+  } */
   
   .course-table table {
     width: 100%;

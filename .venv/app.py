@@ -25,6 +25,7 @@ admin.init_app(app)
 
 ########## TESTING ########## <-- Used for Veiwing what tables have been created
 
+
 def print_database_schema():
     engine = db.get_engine()
     inspector = db.inspect(engine)
@@ -49,6 +50,8 @@ class AvailableClasses(db.Model):
     courseName = db.Column(db.String, unique=True, nullable=False)
     teacher = db.Column(db.String, unique=True, nullable=False)
     time = db.Column(db.String, unique=True, nullable=False)
+    enrollment = db.Column(db.String, unique=True, nullable=False)
+    
     
 #This table will allow teachers to see their classes
 class TeacherClasses(db.Model):
@@ -56,6 +59,7 @@ class TeacherClasses(db.Model):
     courseName = db.Column(db.String, unique=True, nullable=False)
     teacher = db.Column(db.String, unique=True, nullable=False)
     time = db.Column(db.String, unique=True, nullable=False)
+    enrollment = db.Column(db.String, unique=True, nullable=False)
     
 #This table will allow teachers to see the student and grade of a class
 class TeacherView(db.Model):
@@ -63,6 +67,7 @@ class TeacherView(db.Model):
     courseName = db.Column(db.String, unique=True, nullable=False)
     teacher = db.Column(db.String, unique=True, nullable=False)
     time = db.Column(db.String, unique=True, nullable=False)
+    enrollment = db.Column(db.String, unique=True, nullable=False)
 
 # # Define Flask-Admin views for each model
 admin.add_view(ModelView(StudentClasses, db.session))
@@ -85,11 +90,16 @@ def Student():
 def Teacher():
     return render_template("teacher.html")
 
-@app.route('/login')
-def Teacher():
-    return render_template("login.html")
-
 # @app.route('/admin') # Flask Admin Build the route for us so we do not need to specify a route
+
+@app.route('/get-teacher-courses')
+def get_teacher_courses():
+    # Fetch data from the TeacherClasses table
+    teacher_courses = TeacherClasses.query.all()
+    # Convert the data to a dictionary
+    courses_data = [{"courseName": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in teacher_courses]
+    # Return the data as JSON response
+    return jsonify(courses_data)
 
 
 if __name__ == "__main__":

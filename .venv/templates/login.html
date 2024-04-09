@@ -1,21 +1,26 @@
-﻿<!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Enrollment Web App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}"/>
-</head>
-<body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username"><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password"><br><br>
-        <button type="button" onclick="login()">Login</button>
-    </form>
-    <p id="message"></p>
-</body>
+  </head>
+  <body>
+    <div class="main-container" id="main-container">
+      <h1 class="app-name" id="app-name">ACME University</h1>
+      <div class="content-container" id="content-container">
+          <div class="username-container" id="username-container">
+              <p>Username</p>
+              <input type="text" id="username" name="username">
+          </div>
+          <div class="password-container" id="password-container">
+              <p>Password</p>
+              <input type="password" id="password" name="password">
+          </div>
+          <button class="login-button" id="login-button" onclick="login()">Sign in</button>
+      </div>    
+    </div>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+  </body>
 </html>
