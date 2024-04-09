@@ -18,27 +18,74 @@
      
       <div class="content-container" id="content-container">
         <div class="tab-container" id="tab-container">
-          <button class="your-courses" id="your-courses" onclick="renderYourCourses()">CSE 162</button>
-        </div>
+          <button class="your-courses" id="your-courses">CSE</button>
+      </div>
         <div class="course-table" id="course-table">
           <table>
-            
-            <tr>
-              <th>Student Name</th>
-              <th>Grade</th>
-              
-            </tr>
-           
-            <tr>
-              <td>{{ student.name }}</td>
-              <td>{{ student.grade }}</td>
- 
-            </tr
-           
-           </table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for inspect in class_inspects %}
+              <tr>
+                  <td>{{ inspect.student }}</td>
+                  <td><input type="number" id="grade-{{ inspect.id }}" value="{{ inspect.grade }}"></td>
+              </tr>
+              {% endfor %}
+          </tbody>
+        </table>
         </div>
       </div>
     </div>
-    <script src="{{ url_for('static', filename='js/teacher.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/class1.js') }}"></script>
   </body>
 </html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Class Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}"/>
+   
+  </head>
+  <body>
+    <div class="main-container" id="main-container">
+	  <div class="header">
+	  <h1 class="welcome" id="welcome">Welcome!</h1>
+      <h1 class="app-name" id="app-name">ACME University</h1>
+     
+      <a href="signout.html" class="sign-out-link" id="sign-out-link">Sign Out</a>
+    </div>
+     
+      <div class="content-container" id="content-container">
+        <div class="tab-container" id="tab-container">
+          <button class="your-courses" id="your-courses">CSE</button>
+      </div>
+        <div class="course-table" id="course-table">
+          <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inspect in class_inspects %}
+                <tr>
+                    <td>{{ inspect.student }}</td>
+                    <td><input type="number" value="{{ inspect.grade }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/class1.js') }}"></script>
+  </body>
+</html> -->
