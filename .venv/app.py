@@ -4,7 +4,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 import json
 from sqlalchemy.orm import relationship
-from flask_login import LoginManager, UserMixin, login_user, login_required
+from flask_login import LoginManager, UserMixin, login_user, login_required, current_user
 
 ########## TESTING ########## <- Required for print_database_schema()
 
@@ -104,7 +104,7 @@ def login():
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
-        print("USername:" + username)
+        print("Username:" + username)
         print("Password: " + password)
 
         # user = User.authenticate(username, password)
@@ -121,9 +121,83 @@ def login():
     else:
         return render_template("login.html")
 
+
 @app.route('/student')
+@login_required
 def Student():
-    return render_template("student.html")
+    student_id = current_user.id
+    student_courses = StudentClasses.query.filter_by(id=student_id).all()
+    courses_data = [{"name": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in student_courses]
+    return render_template('student.html', yourCoursesTH=True, courses=courses_data)
+
+@app.route('/student/your-courses', methods=['GET'])
+@login_required
+def get_student_courses():
+    student_id = current_user.id
+    student_courses = StudentClasses.query.filter_by(id=student_id).all()
+    courses_data = [{"name": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in student_courses]
+    return jsonify(courses_data)
+
+
+@app.route('/student/add-courses', methods=['GET'])
+@login_required
+def get_available_courses():
+    student_id = current_user.id
+    student_courses = StudentClasses.query.filter_by(id=student_id).all()
+    enrolled_courses = [{"name": course.courseName} for course in student_courses]
+
+    available_courses = AvailableClasses.query.all()
+    courses_data = [{"id": course.id, "name": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in available_courses]
+    return jsonify({"enrolled_courses": enrolled_courses, "courses": courses_data})
+
+
+@app.route('/student/add-courses/enroll', methods=['PUT'])
+@login_required
+def enroll_course():
+    data = request.get_json()
+    course_id = data.get('courseId')
+
+    course = AvailableClasses.query.filter_by(id=course_id).first()
+    if not course:
+        return jsonify({'message': 'Course not found'}), 404
+    
+    student_id = current_user.id
+    enrolled_course = StudentClasses.query.filter_by(id=student_id, class_id=course_id).first()
+    if enrolled_course:
+        return jsonify({'message': 'You are already enrolled in this course'}), 400
+    
+    new_enrollment = StudentClasses(id=student_id, class_id=course_id, courseName=course.courseName, teacher=course.teacher, time=course.time, enrollment=course.enrollment)
+    db.session.add(new_enrollment)
+    # Increment enrollment count for the course
+    course.enrollment = str(int(course.enrollment) + 1)
+    db.session.commit()
+
+    return jsonify({'message': 'Enrolled successfully'}), 200
+
+
+@app.route('/student/add-courses/unenroll', methods=['DELETE'])
+@login_required
+def unenroll_course():
+    data = request.get_json()
+    course_id = data.get('courseId')
+
+    # Find the enrolled course for the current user
+    student_id = current_user.id
+    enrolled_course = StudentClasses.query.filter_by(id=student_id, class_id=course_id).first()
+    if not enrolled_course:
+        return jsonify({'message': 'You are not enrolled in this course'}), 400
+
+    # Remove the course from the StudentClasses table
+    db.session.delete(enrolled_course)
+    # Decrement enrollment count for the course
+    course = AvailableClasses.query.filter_by(id=course_id).first()
+    course.enrollment = str(int(course.enrollment) - 1)
+    db.session.commit()
+
+    return jsonify({'message': 'Unenrolled successfully'}), 200
+
+
+
 
 @app.route('/teacher')
 def Teacher():
@@ -131,19 +205,7 @@ def Teacher():
 
 # @app.route('/admin') # Flask Admin Build the route for us so we do not need to specify a route
 
-@app.route('/student/your-courses')
-def get_student_courses():
 
-    # Query student courses based on user ID
-    student_courses = StudentClasses.query.all()
-    courses_data = [{"courseName": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in student_courses]
-    return jsonify(courses_data)
-
-@app.route('/student/add-courses')
-def get_available_courses():
-    available_courses = AvailableClasses.query.all()
-    courses_data = [{"courseName": course.courseName, "teacher": course.teacher, "time": course.time, "enrollment": course.enrollment} for course in available_courses]
-    return jsonify(courses_data)
 
 @app.route('/get-teacher-courses')
 def get_teacher_courses():

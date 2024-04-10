@@ -1,5 +1,4 @@
 function renderYourCourses() {
-
     var yourCoursesButton = document.getElementById('your-courses');
     var addCoursesButton = document.getElementById('add-courses');
 
@@ -9,18 +8,21 @@ function renderYourCourses() {
     addCoursesButton.style.color = 'black';
 
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-            var courses = JSON.parse(xhttp.responseText);
-            renderCoursesTable(courses, true);
-        }
-    };
     xhttp.open("GET", "/student/your-courses");
     xhttp.send();
+    xhttp.onload = function() {
+        var courses = JSON.parse(xhttp.responseText);
+        var table = document.getElementById('courses-table');
+        table.innerHTML = '<tr><th>Course Name</th><th>Teacher</th><th>Time</th><th>Students Enrolled</th>'
+
+        courses.forEach(function(course) {
+            var row = "<tr><td>" + course.name + "</td><td>" + course.teacher + "</td><td>" + course.time + "</td><td>" + course.enrollment + "</td></tr>";
+            table.innerHTML += row;
+        });
+    }
 }
 
 function renderAddCourses() {
-
     var yourCoursesButton = document.getElementById('your-courses');
     var addCoursesButton = document.getElementById('add-courses');
 
@@ -30,109 +32,39 @@ function renderAddCourses() {
     addCoursesButton.style.color = '#fff';
 
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-            var courses = JSON.parse(xhttp.responseText);
-            renderCoursesTable(courses, false);
-        }
-    };
     xhttp.open("GET", "/student/add-courses");
     xhttp.send();
-}
+    xhttp.onload = function() {
+        var response = JSON.parse(xhttp.responseText);
+        var enrolledCourses = response.enrolled_courses;
+        var courses = response.courses;
+        var table = document.getElementById('courses-table');
+        table.innerHTML = '<tr><th>Course Name</th><th>Teacher</th><th>Time</th><th>Students Enrolled</th><th>Add Class</th>'
 
-function renderCoursesTable(courses, isYourCourses) {
-    var table = document.getElementById("courses-table");
-    table.innerHTML = ""; // Clear previous content
-
-    var headerRow = table.insertRow(0);
-    var headers = ["Course Name", "Teacher", "Time", "Students Enrolled"];
-    if (!isYourCourses) {
-        headers.push("Add class");
-    }
-    headers.forEach(function(header) {
-        var cell = headerRow.insertCell();
-        cell.innerHTML = header;
-    });
-
-    var enrolledCourses = new Set(); // Set to store enrolled courses
-
-    // Fetch the list of enrolled courses
-    if (isYourCourses) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-                var enrolled = JSON.parse(xhttp.responseText);
-                enrolled.forEach(function(course) {
-                    enrolledCourses.add(course.courseName);
-                });
-                addRows();
-            }
-        };
-        xhttp.open("GET", "/student/your-courses");
-        xhttp.send();
-    } else {
-        addRows();
-    }
-
-    function addRows() {
         courses.forEach(function(course) {
-            var row = table.insertRow();
-            var cell1 = row.insertCell();
-            cell1.innerHTML = course.courseName;
-            var cell2 = row.insertCell();
-            cell2.innerHTML = course.teacher;
-            var cell3 = row.insertCell();
-            cell3.innerHTML = course.time;
-            var cell4 = row.insertCell();
-            cell4.innerHTML = course.enrollment;
-            if (!isYourCourses) {
-                var cell5 = row.insertCell();
-                if (enrolledCourses.has(course.courseName)) {
-                    cell5.innerHTML = "<button class='unenroll' onclick=\"unenroll('" + course.courseName + "')\">-</button>";
-                } else {
-                    cell5.innerHTML = "<button class='enroll' onclick=\"enroll('" + course.courseName + "')\">+</button>";
-                }
-            }
+            var isEnrolled = enrolledCourses.some(function(enrolledCourse) {
+                return enrolledCourse.name === course.name;
+            });
+            var buttonClass = isEnrolled ? 'unenroll' : 'enroll';
+            var buttonText = isEnrolled ? '-' : '+';
+            var row = "<tr><td>" + course.name + "</td><td>" + course.teacher + "</td><td>" + course.time + "</td><td>" + course.enrollment + "</td><td><button class='" + buttonClass + "' onclick='" + (isEnrolled ? "unenroll" : "enroll") + "(" + course.id + ")'>" + buttonText + "</button></td></tr>";
+            table.innerHTML += row;
         });
     }
 }
 
-
-// function renderCoursesTable(courses, isYourCourses) {
-//     var table = document.getElementById("courses-table");
-//     table.innerHTML = ""; // Clear previous content
-
-//     var headerRow = table.insertRow(0);
-//     var headers = ["Course Name", "Teacher", "Time", "Students Enrolled"];
-//     if (!isYourCourses) {
-//         headers.push("Add class");
-//     }
-//     headers.forEach(function(header) {
-//         var cell = headerRow.insertCell();
-//         cell.innerHTML = header;
-//     });
-
-//     courses.forEach(function(course) {
-//         var row = table.insertRow();
-//         var cell1 = row.insertCell();
-//         cell1.innerHTML = course.courseName;
-//         var cell2 = row.insertCell();
-//         cell2.innerHTML = course.teacher;
-//         var cell3 = row.insertCell();
-//         cell3.innerHTML = course.time;
-//         var cell4 = row.insertCell();
-//         cell4.innerHTML = course.enrollment;
-//         if (!isYourCourses) {
-//             var cell5 = row.insertCell();
-//             cell5.innerHTML = "<button class='enroll' onclick=\"enroll('" + course.courseName + "')\">+</button>";
-//         }
-//     });
-// }
-
-function enroll(courseName) {
-    // Handle enrollment logic here
+function enroll(courseId) {
+    var xhttp = new XMLHttpRequest();
+    var url = '/student/add-courses/enroll';
+    xhttp.open("PUT", url, true);
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhttp.send(JSON.stringify({ courseId: courseId }));
 }
 
-function unenroll(courseName) {
-    // Handle unenrollment logic here
+function unenroll(courseId) {
+    var xhttp = new XMLHttpRequest();
+    var url = '/student/add-courses/unenroll';
+    xhttp.open("DELETE", url, true);
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhttp.send(JSON.stringify({ courseId: courseId }));
 }
