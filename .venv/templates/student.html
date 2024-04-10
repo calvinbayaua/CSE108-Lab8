@@ -19,8 +19,46 @@
         <button class="add-courses" id="add-courses" onclick="renderAddCourses()">Add Courses</button>
       </div>
       <div class="course-table" id="course-table">
-        <table id="courses-table"> <!-- Add an id to the table -->
-        </table> <!-- Closing tag for table -->
+        <table class="courses-table" id="courses-table">
+          {% if yourCoursesTH %}
+          <tr>
+            <th>Course Name</th>
+            <th>Teacher</th>
+            <th>Time</th>
+            <th>Students Enrolled</th>
+          </tr>
+          {% for course in courses %}
+          <tr>
+            <td>{{ course.name }}</td>
+            <td>{{ course.teacher }}</td>
+            <td>{{ course.time }}</td>
+            <td>{{ course.enrollment }}</td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <th>Course Name</th>
+            <th>Teacher</th>
+            <th>Time</th>
+            <th>Students Enrolled</th>
+            <th>Add class</th>
+          </tr>
+          {% for course in courseCatalog %}
+          <tr>
+            <td>{{ course.name }}</td>
+            <td>{{ course.teacher }}</td>
+            <td>{{ course.time }}</td>
+            <td>{{ course.enrollment }}</td>
+            <td>
+              {% if course in enrolled_courses %}
+              <button class="unenroll" id="unenroll" onclick="unenroll('{{ course.name }}')">-</button>
+              {% else %}
+              <button class="enroll" id="enroll" onclick="enroll('{{ course.name }}')">+</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
       </div>
     </div>
   </div>
